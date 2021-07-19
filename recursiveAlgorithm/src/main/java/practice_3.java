@@ -58,7 +58,7 @@ public class practice_3 {
 
     public static String f(String p){
         String s = data.get(p);
-        if (s == null||s == ""){
+        if (s == null||s.equals("")){
             return p;
         }
         return f(s);
