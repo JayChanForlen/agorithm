@@ -20,6 +20,9 @@ public class Data {
     }
 
     public static int[] exchangeEle(int[] arr, int index_1, int index_2){
+        if (index_1 == index_2){
+            return arr;
+        }
         int[] result = arr;
         int tmp = result[index_1];
         result[index_1] = arr[index_2];
