@@ -5,116 +5,210 @@ package search.skiplist;
  * @author: JayChan
  * @date: 2021/7/23
  * @time: 4:41 PM
- * Copyright (C) 2015 Meituan
+ * Copyright (C) 2015 xxx
  * All rights reserved
  */
 public class SkipList {
 
-    private static volatile SkipList instance = null;
+    private int n = 0;
 
-    private int space;
+    private static SkipList instance = null;
+
+    private static final double RADIO = 0.5;
 
     private Data head;
 
-    public static SkipList getInstance(){
-        if (instance == null){
+    private SkipList() {
+    }
+
+    public int getSize(){
+        return n;
+    }
+
+    /**
+     * Singleton
+     *
+     * @return SkipList
+     */
+    public static SkipList getInstance() {
+        if (instance == null) {
             instance = new SkipList();
-            instance.head = new Data(new Data());
+            instance.head = new Data(Integer.MIN_VALUE, null);
         }
         return instance;
     }
 
-    /**
-     * 添加元素
-     * @param element
-     * @return
-     */
-    public int[] add(int element){
-
-        return null;
+    private void checkInstance() {
+        if (instance == null || instance.head == null) {
+            throw new RuntimeException("链表未进行初始化");
+        }
     }
 
-    /**
-     *
-     * @param element
-     * @return
-     */
-    public int[] del(int element){
-
-        return null;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int[] del(){
-
-        return null;
-    }
 
     /**
      * 查询数组目前存储情况
+     * @return linkToString
      */
-    public void check() {
-
+    public String get() {
+        checkInstance();
+        StringBuilder res = new StringBuilder();
+        Data date = head;
+        while (date.getPoint() != null) {
+            res.append(date.getPoint()).append("|");
+            date = date.getPoint();
+        }
+        return res.toString();
     }
 
     /**
-     * 获取链表中的索引
+     * 通过索引获取链表中的元素
+     *
      * @param index
-     * @return
+     * @return element
      */
-    public int get(int index){
+    public int get(int index) {
+        checkInstance();
+        int n = 0;
+        Data data = head.getPoint();
+        while (true) {
+            if (n == index) {
+                return data.getObj();
+            } else if (data.getPoint() != null) {
+                data = data.getPoint();
+            } else {
+                return -1;
+            }
+            n++;
+        }
+    }
 
-        return 0;
+    /**
+     * 添加元素
+     *
+     * @param element
+     * @return index
+     */
+    public String add(int element) {
+        checkInstance();
+        Data eleDate = new Data(element, null);
+        if (head.getPoint() == null) {
+            head.setPoint(eleDate);
+            n++;
+            return get();
+        } else {
+            Data data = head.getPoint();
+            while (data.getObj() <= element) {
+                if (data.getPoint() == null) {
+                    data.setPoint(eleDate);
+                    n++;
+                    return get();
+                }
+                if (data.getPoint().getObj() > element) {
+                    eleDate.setPoint(data.getPoint());
+                    data.setPoint(eleDate);
+                    n++;
+                    return get();
+                }
+                data = data.getPoint();
+            }
+            throw new RuntimeException("预期之外的错误");
+        }
+    }
+
+    /**
+     * 删除元素
+     *
+     * @param element
+     * @return link
+     */
+    public String del(int element) {
+        checkInstance();
+        Data pre = head;
+        Data data = head.getPoint();
+        while (data.getPoint() != null) {
+            if (data.getObj() == element) {
+                pre.setPoint(data.getPoint());
+                n--;
+                return get();
+            } else {
+                pre = data;
+                data = data.getPoint();
+            }
+        }
+        throw new RuntimeException("未查询到数据：" + element);
+    }
+
+    /**
+     * 删除最后一个元素
+     *
+     * @return link
+     */
+    public String del() {
+        checkInstance();
+        Data data = head.getPoint();
+        while (data.getPoint() != null) {
+            if (data.getPoint().getPoint() != null) {
+                data = data.getPoint();
+            } else {
+                data.setPoint(null);
+                n--;
+            }
+        }
+        return get();
     }
 
     /**
      * 获取上级索引树
-     * @param
-     * @return
+     * todo
+     * @return higherLevelIndexLink
      */
-    private int[] getIndexArr(){
-
-        return new int[0];
+    private SkipList getIndexArr(SkipList skipList) {
+        SkipList indexTree = SkipList.getInstance();
+        for (int index = 0; index <= n+1; index = index+2){
+            indexTree.head.setObj(get(index));
+        }
+        return indexTree;
     }
 
     /**
-     *  重构索引
+     * 重构索引
+     * todo
      */
-    private void restructureIndex(){
+    private void restructureIndex() {
 
     }
 
     /**
-     * 链表中的元素
+     * 链表中元素的存储单元
      */
-    public static class Data{
-        private int data;
-        private Data nextPoint;
+    public static class Data {
+        private int obj;
+        private Data point; //在尾哨兵时表示上一个坐标
 
-        public Data() {
+        public Data(int obj, Data point) {
+            this.obj = obj;
+            this.point = point;
         }
 
-        public Data(Data nextPoint) {
-            this.nextPoint = nextPoint;
+        public int getObj() {
+            return obj;
         }
 
-        public int getData() {
-            return data;
+        public void setObj(int obj) {
+            this.obj = obj;
         }
 
-        public void setData(int data) {
-            this.data = data;
+        public Data getPoint() {
+            return point;
         }
 
-        public Data getNextPoint() {
-            return nextPoint;
+        public void setPoint(Data point) {
+            this.point = point;
         }
 
-        public void setNextPoint(Data nextPoint) {
-            this.nextPoint = nextPoint;
+        @Override
+        public String toString() {
+            return String.valueOf(obj);
         }
     }
 }
