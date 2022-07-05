@@ -7,7 +7,6 @@ import java.util.Scanner;
  * @author: JayChan
  * @date: 2021/7/26
  * @time: 11:38 AM
- * Copyright (C) 2015 Meituan
  * All rights reserved
  */
 public class Test {

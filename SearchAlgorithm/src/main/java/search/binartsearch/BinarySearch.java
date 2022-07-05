@@ -14,7 +14,6 @@ import java.util.Scanner;
  * @author: JayChan
  * @date: 2021/7/22
  * @time: 3:21 下午
- * Copyright (C) 2015 Meituan
  * All rights reserved
  */
 public class BinarySearch {

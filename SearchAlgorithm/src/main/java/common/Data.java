@@ -5,7 +5,6 @@ package common;
  * @author: JayChan
  * @date: 2021/7/22
  * @time: 3:25 下午
- * Copyright (C) 2015 Meituan
  * All rights reserved
  */
 public class Data {
